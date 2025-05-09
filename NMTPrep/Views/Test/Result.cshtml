@@ -1,0 +1,88 @@
+﻿@model List<TestResultVM>
+@using System.Linq
+@{
+    var total = Model.Count;
+    var correct = Model.Count(r => r.IsCorrect);
+    var percent = total == 0 ? 0 : (int)Math.Round(correct * 100.0 / total);
+    ViewData["Title"] = "Результати тесту";
+}
+
+<div class="container ">
+
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8">
+            <div class="card shadow-lg text-center">
+                <div class="card-body">
+                    <h1 class="display-4 fw-bold mb-3">@correct<span class="text-muted">/</span>@total</h1>
+                    <p class="fs-4 mb-4">Правильних відповідей: <strong>@correct</strong> з <strong>@total</strong></p>
+                    <div class="progress mb-4" style="height: 1.5rem;">
+                        <div class="progress-bar @((percent >= 50) ? "bg-success" : "bg-danger")"
+                             role="progressbar"
+                             style="width: @percent%;"
+                             aria-valuenow="@percent"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                            @percent%
+                        </div>
+                    </div>
+                    <a asp-controller="Section" asp-action="Index" class="btn btn-primary btn-lg">
+                        Повернутися до розділів
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Деталі по кожному питанню -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var r = Model[i];
+                <div class="card mb-4 shadow-sm @(r.IsCorrect ? "border-success" : "border-danger")">
+                    <div class="card-header
+                        text-white
+                        @(r.IsCorrect ? "bg-success" : "bg-danger")">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Питання @(i + 1)</span>
+                            @if (r.IsCorrect)
+                            {
+                                <span class="badge bg-light text-success">✔ Правильно</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-light text-danger">✖ Неправильно</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="fs-5 mb-3">@r.Text</p>
+                        <ul class="list-group">
+                            @foreach (var a in r.Answers)
+                            {
+                                var itemClass = a.Id == r.SelectedAnswerId
+                                ? (a.IsCorrect
+                                ? "list-group-item list-group-item-success"
+                                : "list-group-item list-group-item-danger")
+                                : (a.IsCorrect
+                                ? "list-group-item list-group-item-success"
+                                : "list-group-item");
+                                <li class="@itemClass d-flex justify-content-between align-items-center">
+                                    <span>@a.Text</span>
+                                    @if (a.IsCorrect)
+                                    {
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    }
+                                    else if (a.Id == r.SelectedAnswerId)
+                                    {
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+﻿@model NMT.Models.Section
+
+@{
+    ViewData["Title"] = "Додати розділ";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-body p-4">
+                    <h2 class="text-center text-primary mb-4">➕ Додати новий розділ</h2>
+
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-semibold">Назва розділу</label>
+                            <input asp-for="Name" class="form-control shadow-sm" placeholder="Наприклад: Функції" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Category" class="form-label fw-semibold">Категорія</label>
+                            <select asp-for="Category" class="form-select shadow-sm">
+                                <option value="true">Алгебра</option>
+                                <option value="false">Геометрія</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                            ✅ Зберегти розділ
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

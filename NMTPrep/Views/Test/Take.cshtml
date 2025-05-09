@@ -1,0 +1,73 @@
+﻿@model TestQuestionVM
+@{
+    int idx = (int)ViewBag.Index;
+    int total = (int)ViewBag.Total;
+    double pct = (idx + 1) / (double)total * 100;
+    string pctValue = pct.ToString("F0") + "%";
+}
+<body class="test-page">
+    <div class="test-wrapper">
+    <div class="container-fluid d-flex align-items-start justify-content-start py-4">
+            <button type="button"
+                    onclick="history.back()"
+                    class="btn btn-light position-absolute top-0 start-0 m-3 p-2 shadow-sm">
+                <!-- Стрілка ← можна замінити на &times; -->
+                &larr;
+            </button>
+        <div class="card-container w-100">
+
+            <!-- Заголовок і прогрес-бар -->
+            <div class="mb-2">
+                <h5 class="mb-1">Питання @(idx + 1) з @total</h5>
+                <div class="progress-wrapper">
+                    <div class="bar"></div>
+                </div>
+            </div>
+
+            <!-- Картка з питанням та відповідями -->
+            <div class="test-card">
+                <form id="testForm" asp-action="Take" method="post">
+                    <input type="hidden" name="index" value="@idx" />
+
+                    <p class="h4 mb-4 text-start">@Model.Text</p>
+
+                    <ul class="answer-list">
+                        @foreach (var a in Model.Answers)
+                        {
+                            <li tabindex="0">
+                                <input type="radio"
+                                       name="selectedOptionId"
+                                       value="@a.Id"
+                                       required />
+                                <span>@a.Text</span>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- Кнопки навігації -->
+                    <div class="d-flex justify-content-between btn-group">
+                        @if (idx > 0)
+                        {
+                            <button type="button"
+                                    onclick="location.href='@Url.Action("Take", new { index = idx - 1 })'"
+                                    class="btn btn-primary">
+                                ‹ Попереднє
+                            </button>
+                        }
+                        else
+                        {
+                            <span></span>
+                        }
+
+                        <button type="submit"
+                                class="btn btn-success">
+                            @(idx + 1 < total ? "Далі ›" : "Завершити тест")
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    </div>
+</body>

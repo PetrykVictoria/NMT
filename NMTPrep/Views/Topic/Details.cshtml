@@ -1,0 +1,50 @@
+﻿@model NMT.Models.Topic
+
+@{
+    ViewData["Title"] = "Тема: " + Model.Name;
+    Layout = "_Layout"; 
+}
+
+<div class="topic-page">
+    <div class="topic-banner text-white py-4 px-3 d-flex justify-content-center">
+        <div class="text-center">
+            <h2 class="fw-bold text-uppercase mb-1">
+                📘 @Model.Name
+            </h2>
+            <div class="topic-subline mx-auto mt-2"></div>
+        </div>
+    </div>
+
+
+    <div class="topic-content bg-white text-dark p-5 rounded-4 shadow-lg">
+            <h4 class="mb-4 text-primary fw-bold">📖 Теоретичний матеріал</h4>
+
+            @if (!string.IsNullOrEmpty(Model.TheoryHtml))
+            {
+                <div class="theory-content fs-5 lh-lg">
+                    @Html.Raw(Model.TheoryHtml)
+                </div>
+            }
+
+            <div class="text-end mt-4">
+                <a asp-controller="Test" asp-action="Start" asp-route-topicId="@Model.Id"
+                   class="btn btn-success btn-lg px-4 py-2 fw-semibold shadow-sm">
+                    ✅ Пройти тест →
+                </a>
+            </div>
+        </div>
+    </div>
+
+<!-- Підключаємо KaTeX core (без auto-render) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Знайдемо всі <span class="ql-formula" data-value="..."></span>
+        document.querySelectorAll('span.ql-formula').forEach(function (span) {
+            var tex = span.getAttribute('data-value');
+            katex.render(tex, span, { throwOnError: false });
+        });
+    });
+</script>

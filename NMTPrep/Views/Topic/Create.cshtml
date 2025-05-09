@@ -1,0 +1,84 @@
+﻿@model NMT.Models.Topic
+
+@{
+    ViewData["Title"] = "Додати тему";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-12 col-xl-11">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-body p-4">
+
+                    <h2 class="text-center text-success mb-4">➕ Додати нову тему</h2>
+
+                    <form asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-semibold">Назва теми</label>
+                            <input asp-for="Name" class="form-control shadow-sm" placeholder="Наприклад: Лінійна функція" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="SectionId" class="form-label fw-semibold">Розділ</label>
+                            <select asp-for="SectionId" class="form-select shadow-sm" asp-items="ViewBag.Sections">
+                                <option value="">-- Оберіть розділ --</option>
+                            </select>
+                            <span asp-validation-for="SectionId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold">Теоретичний матеріал</label>
+                            <div id="quill-container" style="height: 300px;" class="shadow-sm bg-white rounded mb-2"></div>
+                            <input asp-for="TheoryHtml" type="hidden" />
+
+                            <span asp-validation-for="TheoryHtml" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
+                            ✅ Зберегти тему
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Підключаємо Quill та KaTeX *@
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
+<link href="https://cdn.quilljs.com/1.3.6/quill.katex.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js"></script>
+
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 1) Ініціалізуємо Quill
+        var quill = new Quill('#quill-container', {
+            theme: 'snow',
+            placeholder: 'Введіть теоретичний матеріал тут...',
+            modules: {
+                formula: true,
+                toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link', 'image', 'formula'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // 2) Перед сабмітом переносимо HTML у приховане поле
+        var form = document.querySelector('form');
+        form.addEventListener('submit', function () {
+            // Переконайтесь, що name поля збігається з вашою властивістю моделі
+            var hidden = document.querySelector('input[name="TheoryHtml"]');
+            hidden.value = quill.root.innerHTML;
+        });
+    });
+</script>

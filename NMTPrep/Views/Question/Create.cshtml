@@ -1,0 +1,326 @@
+﻿@model NMT.Models.Question
+
+@{
+    ViewData["Title"] = "Додати нове питання";
+    var answers = Model.AnswerOptions.ToList();
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">➕ Додати нове питання</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label asp-for="TopicId" class="form-label fw-semibold">Розділ</label>
+                            <select asp-for="TopicId" class="form-select shadow-sm" asp-items="ViewBag.TopicId">
+                                <option value="">-- Оберіть розділ --</option>
+                            </select>
+                            <span asp-validation-for="TopicId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="QuestionTypeId" class="form-label fw-semibold">Тип питання</label>
+                            <select asp-for="QuestionTypeId" class="form-select shadow-sm" asp-items="ViewBag.QuestionTypeId">
+                                <option value="">-- Оберіть тип --</option>
+                            </select>
+                            <span asp-validation-for="QuestionTypeId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Difficulty" class="form-label fw-semibold">Складність (1–10)</label>
+                            <input asp-for="Difficulty" type="number" min="1" max="10" class="form-control shadow-sm" placeholder="Наприклад: 5" />
+                            <span asp-validation-for="Difficulty" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Text" class="form-label fw-semibold">Текст питання</label>
+                            <textarea asp-for="Text" rows="4" class="form-control shadow-sm" placeholder="Введіть текст питання"></textarea>
+                            <span asp-validation-for="Text" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Image" class="form-label fw-semibold">Зображення</label>
+                            <input asp-for="Image" type="file" accept="image/*" class="form-control form-control-sm" />
+                            <span asp-validation-for="Image" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Hint" class="form-label fw-semibold">Підказка</label>
+                            <input asp-for="Hint" class="form-control shadow-sm" placeholder="Коротка підказка для учня" />
+                            <span asp-validation-for="Hint" class="text-danger small"></span>
+                        </div>
+
+                        <h4>Варіанти відповідей</h4>
+                        <div id="answersContainer">
+                        </div>
+                        @for (int i = 0; i < answers.Count; i++)
+                        {
+                            <div class="row g-2 align-items-center mb-3">
+
+                                <div class="col">
+                                    <input type="text"
+                                           name="AnswerOptions[@i].OptionText"
+                                           value="@answers[i].OptionText"
+                                           class="form-control"
+                                           placeholder="Текст варіанту №@(i+1)" />
+                                    <span data-valmsg-for="AnswerOptions[@i].OptionText"
+                                          data-valmsg-replace="true"
+                                          class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="form-check">
+                                        <input type="hidden"
+                                               name="AnswerOptions[@i].IsCorrect"
+                                               value="false" />
+
+                                        <input type="checkbox"
+                                               id="AnswerOptions_@(i)__IsCorrect"
+                                               name="AnswerOptions[@i].IsCorrect"
+                                               value="true"
+                                               class="form-check-input"
+                                        @(answers[i].IsCorrect ? "checked" : "") />
+
+                                        <label for="AnswerOptions_@(i)__IsCorrect"
+                                               class="form-check-label">
+                                            Правильний
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
+
+
+
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold">
+                                ✅ Зберегти питання
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a asp-action="Index" class="text-decoration-none text-secondary">
+                    ← Повернутися до списку питань
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+                                <script>
+  (() => {
+    const container = document.getElementById('answersContainer');
+    const select = document.getElementById('questionTypeSelect');
+
+    function renderTemplate(id) {
+      const tpl = document.getElementById(id);
+      container.innerHTML = tpl ? tpl.innerHTML : '';
+    }
+
+    select.addEventListener('change', () => {
+      switch (select.value) {
+        case '1':
+          renderTemplate('tpl-single');
+          break;
+        case '2':
+          renderTemplate('tpl-multi');
+          break;
+        case '3':
+          renderTemplate('tpl-open');
+          break;
+        default:
+          container.innerHTML = '';
+      }
+    });
+
+    // Якщо у вас редагування і вже є значення, можна викликати:
+    if (select.value) {
+      select.dispatchEvent(new Event('change'));
+    }
+  })();
+</script>
+
+@* 
+      @model NMT.Models.Question
+
+@{
+    ViewData["Title"] = "Додати нове питання";
+    var answers = Model.AnswerOptions.ToList();
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">➕ Додати нове питання</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label asp-for="TopicId" class="form-label fw-semibold">Розділ</label>
+                            <select asp-for="TopicId" class="form-select shadow-sm" asp-items="ViewBag.TopicId">
+                                <option value="">-- Оберіть розділ --</option>
+                            </select>
+                            <span asp-validation-for="TopicId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="QuestionTypeId" class="form-label fw-semibold">Тип питання</label>
+                            <select asp-for="QuestionTypeId"
+                                    class="form-select"
+                                    id="questionTypeSelect"
+                                    asp-items="ViewBag.QuestionTypeId">
+                                <option value="">-- Оберіть тип --</option>
+                            </select>
+                            <span asp-validation-for="QuestionTypeId" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label asp-for="Difficulty" class="form-label fw-semibold">Складність (1–10)</label>
+                            <input asp-for="Difficulty" type="number" min="1" max="10" class="form-control shadow-sm" placeholder="Наприклад: 5" />
+                            <span asp-validation-for="Difficulty" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Text" class="form-label fw-semibold">Текст питання</label>
+                            <textarea asp-for="Text" rows="4" class="form-control shadow-sm" placeholder="Введіть текст питання"></textarea>
+                            <span asp-validation-for="Text" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Image" class="form-label fw-semibold">Зображення</label>
+                            <input asp-for="Image" type="file" accept="image/*" class="form-control form-control-sm" />
+                            <span asp-validation-for="Image" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Hint" class="form-label fw-semibold">Підказка</label>
+                            <input asp-for="Hint" class="form-control shadow-sm" placeholder="Коротка підказка для учня" />
+                            <span asp-validation-for="Hint" class="text-danger small"></span>
+                        </div>
+
+                        <h4>Варіанти відповідей</h4>
+
+                        <!-- Один правильний -->
+                        <div id="singleContainer" class="answer-group">
+                            @for (int i = 0; i < answers.Count; i++)
+                            {
+                                <div class="form-check mb-2">
+                                    <input type="hidden"
+                                           name="AnswerOptions[@i].IsCorrect"
+                                           value="false" />
+                                    <input type="radio"
+                                           name="AnswerOptions[@i].IsCorrect"
+                                           value="true"
+                                           id="opt_single_@i"
+                                           class="form-check-input"
+                                    @(answers[i].IsCorrect ? "checked" : "") />
+                                    <label for="opt_single_@i" class="form-check-label">
+                                        <input type="text"
+                                               name="AnswerOptions[@i].OptionText"
+                                               value="@answers[i].OptionText"
+                                               class="form-control d-inline-block w-75"
+                                               placeholder="Варіант №@(i+1)" />
+                                    </label>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Декілька правильних -->
+                        <div id="multiContainer" class="answer-group d-none">
+                            @for (int i = 0; i < answers.Count; i++)
+                            {
+                                <div class="form-check mb-2">
+                                    <input type="hidden"
+                                           name="AnswerOptions[@i].IsCorrect"
+                                           value="false" />
+                                    <input type="checkbox"
+                                           name="AnswerOptions[@i].IsCorrect"
+                                           value="true"
+                                           id="opt_multi_@i"
+                                           class="form-check-input"
+                                    @(answers[i].IsCorrect ? "checked" : "") />
+                                    <label for="opt_multi_@i" class="form-check-label">
+                                        <input type="text"
+                                               name="AnswerOptions[@i].OptionText"
+                                               value="@answers[i].OptionText"
+                                               class="form-control d-inline-block w-75"
+                                               placeholder="Варіант №@(i+1)" />
+                                    </label>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Відкрита числова відповідь -->
+                        <div id="openContainer" class="answer-group d-none">
+                            <div class="mb-3">
+                                <label asp-for="OpenAnswer" class="form-label fw-semibold">Відкрита відповідь (число)</label>
+                                <input type="number"
+                                       name="OpenAnswer"
+                                       class="form-control"
+                                       placeholder="Введіть число" />
+                                <span asp-validation-for="OpenAnswer" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold">
+                                ✅ Зберегти питання
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a asp-action="Index" class="text-decoration-none text-secondary">
+                    ← Повернутися до списку питань
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+  <script>
+    (function() {
+      const select = document.getElementById('questionTypeSelect');
+      const groups = {
+        '1': document.getElementById('singleContainer'),
+        '2': document.getElementById('multiContainer'),
+        '3': document.getElementById('openContainer')
+      };
+
+      function updateVisibility() {
+        const val = select.value;
+        Object.keys(groups).forEach(key =>
+          groups[key].classList.toggle('d-none', key !== val)
+        );
+      }
+
+      select.addEventListener('change', updateVisibility);
+      updateVisibility(); // відобразити згідно поточного значення
+    })();
+  </script>
+}
+ *@
+

@@ -1,0 +1,72 @@
+﻿@model NMT.Models.Section
+
+@{
+    string icon = Model.Category ? "🧮" : "📐"; // Алгебра / Геометрія
+    string categoryName = Model.Category ? "Алгебра" : "Геометрія";
+    string categoryClass = Model.Category ? "bg-primary text-white" : "bg-success text-white";
+    int topicCount = Model.Topics?.Count ?? 0;
+}
+
+
+<div class="container">
+    <!-- Заголовок -->
+    <div class="bg-light bg-opacity-75 rounded-4 p-4 shadow-lg text-center">
+        <h2 class="fw-bold text-dark">@Model.Name</h2>
+
+        <h5 class="@categoryClass mt-3 px-3 py-1 d-inline-block rounded-pill border border-white category-style">
+            @icon Категорія: @categoryName
+        </h5>
+
+        <div class="mt-2 text-dark fw-medium" style="letter-spacing: 0.3px;">
+            👥 У розділі @topicCount @(topicCount == 1 ? "тема" : topicCount >= 2 && topicCount <= 4 ? "теми" : "тем")
+        </div>
+    </div>
+
+
+    <hr class="my-4" />
+
+    <!-- Теми -->
+    <div class="bg-white bg-opacity-75 rounded-4 p-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-semibold text-dark mb-0">🧩 Теми в розділі</h4>
+            <a asp-controller="Topic" asp-action="Create" asp-route-sectionId="@Model.Id" class="btn btn-outline-success btn-sm">
+                ➕ Додати тему
+            </a>
+        </div>
+
+        @if (Model.Topics != null && Model.Topics.Any())
+        {
+            <div class="row">
+                @foreach (var topic in Model.Topics)
+                {
+                    var progress = 17; 
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title fw-semibold">@topic.Name</h5>
+                                <div class="progress mb-2" style="height: 10px;">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: @progress%" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <a href="/Topic/Details/@topic.Id" class="btn btn-sm btn-outline-primary mt-auto w-100">Перейти до теми</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">У цьому розділі поки що немає тем. Додайте першу, щоб почати 🚀</p>
+        }
+    </div>
+
+    <!-- Кнопки -->
+    <div class="d-flex justify-content-between mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-semibold px-4">
+            ✏️ Редагувати розділ
+        </a>
+        <a asp-action="Index" class="btn btn-outline-primary fw-semibold px-4">
+            🏠 Назад до розділів
+        </a>
+    </div>
+</div>
